@@ -5,10 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Baddie 🦜💅</title>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; background-color: pink; }
-        canvas { background: skyblue; display: block; margin: auto; border: 3px solid black; }
-        h1 { color: purple; font-size: 28px; font-weight: bold; }
-        #score { font-size: 24px; font-weight: bold; color: black; margin-top: 10px; }
+        body { 
+            text-align: center; 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(to bottom, #ff69b4, #ff1493); 
+            color: white; 
+        }
+        canvas { 
+            background: skyblue; 
+            display: block; 
+            margin: auto; 
+            border: 3px solid black; 
+            border-radius: 10px;
+        }
+        h1 { font-size: 32px; font-weight: bold; text-shadow: 2px 2px purple; }
+        #score { font-size: 24px; font-weight: bold; margin-top: 10px; }
         #restartBtn { 
             display: none; 
             margin-top: 10px; 
@@ -19,15 +30,17 @@
             color: white; 
             cursor: pointer;
             border-radius: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
         }
         #restartBtn:hover { background: darkmagenta; }
     </style>
 </head>
 <body>
-    <h1>Flappy Baddie 🦜💅</h1>
+    <h1>FLAPPY BADDIE 🦜💅 (Anna Pepe Edition)</h1>
     <div id="score">Punteggio: 0</div>
     <canvas id="gameCanvas" width="320" height="480"></canvas>
-    <button id="restartBtn" onclick="restartGame()">Riprova, Baddie 🔄</button>
+    <button id="restartBtn" onclick="restartGame()">💖 Riprova, Baddie 💖</button>
 
     <script>
         let canvas = document.getElementById("gameCanvas");
@@ -79,8 +92,8 @@
             bird.velocity += bird.gravity;
             bird.y += bird.velocity;
 
-            if (frame % 90 === 0) {
-                let gap = 90;
+            if (frame % 100 === 0) { // Aumentato il tempo tra le pipe per più gap
+                let gap = 130; // Aumentato lo spazio per meno ragequit
                 let topHeight = Math.random() * (canvas.height / 2);
                 pipes.push({ x: canvas.width, width: 40, top: topHeight, bottom: topHeight + gap });
             }
@@ -96,6 +109,7 @@
             if (checkCollision()) {
                 gameOver = true;
                 document.getElementById("restartBtn").style.display = "block";
+                document.getElementById("score").innerHTML = "💀 GAME OVER! Score: " + score + " 💀";
             }
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
