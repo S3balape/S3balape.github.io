@@ -1,2 +1,72 @@
-<h1>HELLOUUUU :></h1>
-<h3>Heck yea</h3>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Baddie 🦜✨</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        canvas { background: skyblue; display: block; margin: auto; }
+    </style>
+</head>
+<body>
+    <h1>Flappy Baddie 🦜💅</h1>
+    <canvas id="gameCanvas" width="320" height="480"></canvas>
+    
+    <script>
+        let canvas = document.getElementById("gameCanvas");
+        let ctx = canvas.getContext("2d");
+
+        let bird = { x: 50, y: 150, radius: 15, gravity: 1.5, lift: -20, velocity: 0 };
+        let pipes = [];
+        let frame = 0;
+
+        function drawBird() {
+            ctx.fillStyle = "yellow";
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawPipes() {
+            pipes.forEach(pipe => {
+                ctx.fillStyle = "green";
+                ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
+                ctx.fillRect(pipe.x, pipe.bottom, pipe.width, canvas.height - pipe.bottom);
+            });
+        }
+
+        function update() {
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+
+            if (bird.y + bird.radius > canvas.height) bird.y = canvas.height - bird.radius;
+            if (bird.y - bird.radius < 0) bird.y = bird.radius;
+
+            if (frame % 90 === 0) {
+                let gap = 100;
+                let topHeight = Math.random() * (canvas.height / 2);
+                pipes.push({ x: canvas.width, width: 40, top: topHeight, bottom: topHeight + gap });
+            }
+
+            pipes.forEach(pipe => { pipe.x -= 2; });
+
+            pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBird();
+            drawPipes();
+
+            frame++;
+            requestAnimationFrame(update);
+        }
+
+        function jump() { bird.velocity = bird.lift; }
+
+        document.addEventListener("keydown", jump);
+        canvas.addEventListener("click", jump);
+
+        update();
+    </script>
+</body>
+</html>
