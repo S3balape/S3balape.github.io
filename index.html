@@ -3,23 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Baddie 🦜✨</title>
+    <title>Flappy Baddie 🦜💅</title>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; }
-        canvas { background: skyblue; display: block; margin: auto; }
+        body { text-align: center; font-family: Arial, sans-serif; background-color: pink; }
+        canvas { background: skyblue; display: block; margin: auto; border: 3px solid black; }
+        h1 { color: purple; font-size: 28px; font-weight: bold; }
+        #score { font-size: 24px; font-weight: bold; color: black; margin-top: 10px; }
+        #restartBtn { 
+            display: none; 
+            margin-top: 10px; 
+            padding: 10px 20px; 
+            font-size: 20px; 
+            border: none; 
+            background: purple; 
+            color: white; 
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #restartBtn:hover { background: darkmagenta; }
     </style>
 </head>
 <body>
     <h1>Flappy Baddie 🦜💅</h1>
+    <div id="score">Punteggio: 0</div>
     <canvas id="gameCanvas" width="320" height="480"></canvas>
-    
+    <button id="restartBtn" onclick="restartGame()">Riprova, Baddie 🔄</button>
+
     <script>
         let canvas = document.getElementById("gameCanvas");
         let ctx = canvas.getContext("2d");
 
-        let bird = { x: 50, y: 150, radius: 15, gravity: 1.5, lift: -20, velocity: 0 };
+        let bird = { x: 50, y: 150, radius: 15, gravity: 0.8, lift: -12, velocity: 0 };
         let pipes = [];
         let frame = 0;
+        let score = 0;
+        let gameOver = false;
 
         function drawBird() {
             ctx.fillStyle = "yellow";
@@ -36,15 +54,33 @@
             });
         }
 
+        function drawScore() {
+            document.getElementById("score").textContent = "Punteggio: " + score;
+        }
+
+        function checkCollision() {
+            if (bird.y + bird.radius >= canvas.height || bird.y - bird.radius <= 0) return true;
+
+            for (let pipe of pipes) {
+                if (
+                    bird.x + bird.radius > pipe.x &&
+                    bird.x - bird.radius < pipe.x + pipe.width &&
+                    (bird.y - bird.radius < pipe.top || bird.y + bird.radius > pipe.bottom)
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         function update() {
+            if (gameOver) return;
+
             bird.velocity += bird.gravity;
             bird.y += bird.velocity;
 
-            if (bird.y + bird.radius > canvas.height) bird.y = canvas.height - bird.radius;
-            if (bird.y - bird.radius < 0) bird.y = bird.radius;
-
             if (frame % 90 === 0) {
-                let gap = 100;
+                let gap = 90;
                 let topHeight = Math.random() * (canvas.height / 2);
                 pipes.push({ x: canvas.width, width: 40, top: topHeight, bottom: topHeight + gap });
             }
@@ -53,15 +89,38 @@
 
             pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
 
+            pipes.forEach(pipe => {
+                if (pipe.x + pipe.width === bird.x) score++;
+            });
+
+            if (checkCollision()) {
+                gameOver = true;
+                document.getElementById("restartBtn").style.display = "block";
+            }
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBird();
             drawPipes();
+            drawScore();
 
             frame++;
             requestAnimationFrame(update);
         }
 
-        function jump() { bird.velocity = bird.lift; }
+        function jump() {
+            if (!gameOver) bird.velocity = bird.lift;
+        }
+
+        function restartGame() {
+            bird.y = 150;
+            bird.velocity = 0;
+            pipes = [];
+            score = 0;
+            frame = 0;
+            gameOver = false;
+            document.getElementById("restartBtn").style.display = "none";
+            update();
+        }
 
         document.addEventListener("keydown", jump);
         canvas.addEventListener("click", jump);
