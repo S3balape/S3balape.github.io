@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Baddie 🦜💅</title>
+    <title>Flappy Baddie 💎✨</title>
     <style>
         body { 
             text-align: center; 
@@ -37,7 +37,7 @@
     </style>
 </head>
 <body>
-    <h1>FLAPPY BADDIE 🦜💅 (Anna Pepe Edition)</h1>
+    <h1>FLAPPY BADDIE 💎✨ (Anna Pepe Drip Edition)</h1>
     <div id="score">Punteggio: 0</div>
     <canvas id="gameCanvas" width="320" height="480"></canvas>
     <button id="restartBtn" onclick="restartGame()">💖 Riprova, Baddie 💖</button>
@@ -46,17 +46,17 @@
         let canvas = document.getElementById("gameCanvas");
         let ctx = canvas.getContext("2d");
 
-        let bird = { x: 50, y: 150, radius: 15, gravity: 0.8, lift: -12, velocity: 0 };
+        let diamondImg = new Image();
+        diamondImg.src = "https://upload.wikimedia.org/wikipedia/commons/e/e0/Diamond-icon.png"; // 💎 ICONA DIAMANTE
+
+        let bird = { x: 50, y: 150, size: 30, gravity: 0.7, lift: -10, velocity: 0 };
         let pipes = [];
         let frame = 0;
         let score = 0;
         let gameOver = false;
 
         function drawBird() {
-            ctx.fillStyle = "yellow";
-            ctx.beginPath();
-            ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.drawImage(diamondImg, bird.x - bird.size / 2, bird.y - bird.size / 2, bird.size, bird.size);
         }
 
         function drawPipes() {
@@ -68,17 +68,19 @@
         }
 
         function drawScore() {
-            document.getElementById("score").textContent = "Punteggio: " + score;
+            let quotes = ["Più bella cosa non c'è ✨", "Drip troppo grande 💎", "Baddie top 🔥", "Anna Pepe mode ON 🎤"];
+            let randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById("score").textContent = `Punteggio: ${score} | ${randomQuote}`;
         }
 
         function checkCollision() {
-            if (bird.y + bird.radius >= canvas.height || bird.y - bird.radius <= 0) return true;
+            if (bird.y + bird.size / 2 >= canvas.height || bird.y - bird.size / 2 <= 0) return true;
 
             for (let pipe of pipes) {
                 if (
-                    bird.x + bird.radius > pipe.x &&
-                    bird.x - bird.radius < pipe.x + pipe.width &&
-                    (bird.y - bird.radius < pipe.top || bird.y + bird.radius > pipe.bottom)
+                    bird.x + bird.size / 2 > pipe.x &&
+                    bird.x - bird.size / 2 < pipe.x + pipe.width &&
+                    (bird.y - bird.size / 2 < pipe.top || bird.y + bird.size / 2 > pipe.bottom)
                 ) {
                     return true;
                 }
@@ -92,8 +94,8 @@
             bird.velocity += bird.gravity;
             bird.y += bird.velocity;
 
-            if (frame % 100 === 0) { // Aumentato il tempo tra le pipe per più gap
-                let gap = 130; // Aumentato lo spazio per meno ragequit
+            if (frame % 100 === 0) { 
+                let gap = 140; 
                 let topHeight = Math.random() * (canvas.height / 2);
                 pipes.push({ x: canvas.width, width: 40, top: topHeight, bottom: topHeight + gap });
             }
@@ -109,7 +111,7 @@
             if (checkCollision()) {
                 gameOver = true;
                 document.getElementById("restartBtn").style.display = "block";
-                document.getElementById("score").innerHTML = "💀 GAME OVER! Score: " + score + " 💀";
+                document.getElementById("score").innerHTML = `💀 GAME OVER! Score: ${score} 💀 <br> <b>Non puoi essere me, sei troppo basic 🔥</b>`;
             }
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
